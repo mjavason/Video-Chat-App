@@ -32,16 +32,13 @@ export class RoomGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: any,
   ) {
-    console.log(payload);
+console.log('Room joined')
 
     const roomId = payload[0];
     const userId = payload[1];
 
     client.join(roomId);
-    client.emit('join-room', { roomId, userId });
     client.to(roomId).emit('user-connected', userId);
-
-    client.emit('join-room', roomId, userId);
   }
 
   // This method is called when the WebSocket server is initialized. ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,8 +49,6 @@ export class RoomGateway
   // This method is called when a client disconnects from the WebSocket server//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
-
-    // client.to(roomId).emit('user-disconnected', client.id);
   }
 }
 

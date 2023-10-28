@@ -1,10 +1,15 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+    <link rel="manifest" href="assets/favicon/site.webmanifest">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script defer src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
     <script defer type="module" src="app.js"></script>
     <style>
       #video-grid {
@@ -22,14 +27,10 @@
   </head>
   <body>
     <h1>Video Chat</h1>
+    <h3>Share your link to invite others</h3>
     <h2>
       Room id:
       <span id="roomId"></span>
-      <input id="roomId" type="text">
-    </h2>
-    <h2>
-      Status:
-      <span id="socketStatus"></span>
     </h2>
     <div id="video-grid"></div>
   </body>
