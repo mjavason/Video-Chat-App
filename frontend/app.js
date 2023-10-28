@@ -4,6 +4,7 @@ import { io } from 'https://cdn.socket.io/4.4.1/socket.io.esm.min.js';
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const roomId = urlParams.get('room_id');
+var peers = {};
 
 // If room ID is not set, create a new one
 if (!roomId) {
@@ -50,6 +51,13 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) 
     connectToNewUser(userId, stream);
   });
 
+  // Listen for user disconnections
+  socketIo.on('user-disconnected', (userId) => {
+    console.log('disconnected', userId);
+    // Close the peer connection if it exists
+    if (peers[userId]) peers[userId].close();
+  });
+
   myPeer.on('call', (call) => {
     console.log('Answering call');
     call.answer(stream);
@@ -70,13 +78,6 @@ socketIo.on('connect', () => {
 // Whenever a new peer is opened, take the ID and join the same room
 myPeer.on('open', (id) => {
   socketIo.emit('join-room', roomId, id);
-});
-
-// Listen for user disconnections
-socketIo.on('user-disconnected', (userId) => {
-  console.log(userId);
-  // Close the peer connection if it exists
-  if (peers[userId]) peers[userId].close();
 });
 
 /**
@@ -129,5 +130,5 @@ function connectToNewUser(userId, stream) {
   });
 
   // Store the peer connection if needed
-  // peers[userId] = call;
+  peers[userId] = call;
 }
