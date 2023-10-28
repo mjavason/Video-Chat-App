@@ -1,32 +1,30 @@
 import { io } from 'https://cdn.socket.io/4.4.1/socket.io.esm.min.js';
-// import * as peer from 'https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js';
 
-// Parse the query string
+// Parse the query string to extract the room ID
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const roomId = urlParams.get('room_id');
 
-// if room id is not set, create a new one
+// If room ID is not set, create a new one
 if (!roomId) {
-  // If "roomId" doesn't exist, generate a new room ID
+  // Generate a new room ID
   const newRoomId = generateUniqueId(50);
 
-  // Set the "roomId" parameter in the URL
+  // Set the "room_id" parameter in the URL
   urlParams.set('room_id', newRoomId);
 
-  // Update the URL with the new "roomId" parameter
+  // Update the URL with the new "room_id" parameter
   const newUrl = window.location.pathname + '?' + urlParams.toString();
   history.pushState({ path: newUrl }, '', newUrl);
 }
 
 console.log(`Room ID: ${roomId}`);
 
-// const sendMessageButton = document.getElementById('sendMessage');
 const roomIdHeader = document.getElementById('roomId');
 const myVideo = document.createElement('video');
 const videoGrid = document.getElementById('video-grid');
 
-//mute your own microphone, so you dont hear yourself
+// Mute your own microphone so you don't hear yourself
 myVideo.muted = true;
 
 roomIdHeader.innerHTML = roomId;
@@ -34,23 +32,26 @@ roomIdHeader.innerHTML = roomId;
 const serverUrl = 'ws://localhost'; // WebSocket URL
 const socketIo = io(serverUrl);
 
-// const peers = {};
 const myPeer = new Peer(undefined, {
   host: '/',
   port: '3001',
 });
 
+/**
+ * Request access to the user's camera and microphone, then add the user's video stream.
+ * @param {MediaStream} stream - The user's video and audio stream.
+ */
 navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
   addVideoStream(myVideo, stream);
 
-  // Notify everyone when a new user is connected to our room
+  // Notify everyone when a new user is connected to the room
   socketIo.on('user-connected', (userId) => {
     console.log('User connected:', userId);
     connectToNewUser(userId, stream);
   });
 
   myPeer.on('call', (call) => {
-    console.log('answering call');
+    console.log('Answering call');
     call.answer(stream);
 
     const video = document.createElement('video');
@@ -66,19 +67,23 @@ socketIo.on('connect', () => {
   console.log('Connected to the server');
 });
 
-// whenever a new peer is opened, take the id and join the same room
+// Whenever a new peer is opened, take the ID and join the same room
 myPeer.on('open', (id) => {
   socketIo.emit('join-room', roomId, id);
 });
-// Join a room immediately after the connection is established
 
-/////////////////////////////////////////////////////////////////////////
-
+// Listen for user disconnections
 socketIo.on('user-disconnected', (userId) => {
   console.log(userId);
+  // Close the peer connection if it exists
   if (peers[userId]) peers[userId].close();
 });
 
+/**
+ * Generate a unique ID of a specified length.
+ * @param {number} length - The length of the unique ID.
+ * @returns {string} The generated unique ID.
+ */
 function generateUniqueId(length) {
   const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let uniqueId = '';
@@ -91,6 +96,11 @@ function generateUniqueId(length) {
   return uniqueId;
 }
 
+/**
+ * Add a video stream to a video element and play it.
+ * @param {HTMLVideoElement} video - The video element to display the stream.
+ * @param {MediaStream} stream - The media stream to display.
+ */
 function addVideoStream(video, stream) {
   video.srcObject = stream;
   video.addEventListener('loadedmetadata', () => {
@@ -99,8 +109,13 @@ function addVideoStream(video, stream) {
   videoGrid.append(video);
 }
 
+/**
+ * Connect to a new user and display their video stream.
+ * @param {string} userId - The ID of the new user to connect to.
+ * @param {MediaStream} stream - The user's video and audio stream.
+ */
 function connectToNewUser(userId, stream) {
-  console.log('calling', userId);
+  console.log('Calling', userId);
 
   const call = myPeer.call(userId, stream);
   const video = document.createElement('video');
@@ -113,5 +128,6 @@ function connectToNewUser(userId, stream) {
     video.remove();
   });
 
+  // Store the peer connection if needed
   // peers[userId] = call;
 }

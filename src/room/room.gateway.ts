@@ -21,6 +21,9 @@ import generateUniqueId from 'src/utils/generate_unique_id.util';
 export class RoomGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
+  private roomId = '';
+  private userId = '';
+
   // This method is called when a client connects to the WebSocket server.////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   handleConnection(client: Socket | any) {
     console.log(`Client connected: ${client.id}`);
@@ -32,13 +35,13 @@ export class RoomGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: any,
   ) {
-console.log('Room joined')
+    console.log('Room joined');
 
-    const roomId = payload[0];
-    const userId = payload[1];
+    this.roomId = payload[0];
+    this.userId = payload[1];
 
-    client.join(roomId);
-    client.to(roomId).emit('user-connected', userId);
+    client.join(this.roomId);
+    return client.to(this.roomId).emit('user-connected', this.userId);
   }
 
   // This method is called when the WebSocket server is initialized. ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,8 +50,9 @@ console.log('Room joined')
   }
 
   // This method is called when a client disconnects from the WebSocket server//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  handleDisconnect(client: Socket) {
-    console.log(`Client disconnected: ${client.id}`);
+  handleDisconnect(@ConnectedSocket() client: Socket) {
+    console.log(`Client disconnected: ${client.id}`, `room-id: ${this.roomId}`);
+    client.to(this.roomId).emit('user-disconnected', this.userId);
   }
 }
 
