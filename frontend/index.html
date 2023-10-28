@@ -3,16 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Socket.IO Chat</title>
+    <title>Document</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="module" src="app.js"></script>
+    <script defer type="module" src="app.js"></script>
+    <style>
+      #video-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 300px);
+        grid-auto-rows: 300px;
+      }
+
+      video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    </style>
   </head>
   <body>
-    <h1>Socket.IO Chat</h1>
-    <div id="chat">
-      <ul id="messages"></ul>
-      <input id="message" autocomplete="off" />
-      <button id="sendMessage">Send</button>
-    </div>
+    <h1>Video Chat</h1>
+    <h2>
+      Room id:
+      <span id="roomId"></span>
+      <input id="roomId" type="text">
+    </h2>
+    <h2>
+      Status:
+      <span id="socketStatus"></span>
+    </h2>
+    <div id="video-grid"></div>
   </body>
 </html>
