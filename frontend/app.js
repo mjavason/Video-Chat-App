@@ -22,6 +22,7 @@ if (!roomId) {
 console.log(`Room ID: ${roomId}`);
 
 const roomIdHeader = document.getElementById('roomId');
+const meetingStatusHeader = document.getElementById('meetingStatusId');
 const myVideo = document.createElement('video');
 const videoGrid = document.getElementById('video-grid');
 
@@ -30,7 +31,7 @@ myVideo.muted = true;
 
 roomIdHeader.innerHTML = roomId;
 
-const serverUrl = 'wss://video-chat-api-duql.onrender.com:5000'; //ws:localhost // WebSocket URL
+const serverUrl = 'ws://localhost:5000'; //ws:localhost:5000 // WebSocket URL
 const socketIo = io(serverUrl);
 
 const myPeer = new Peer({
@@ -49,12 +50,14 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) 
   // Notify everyone when a new user is connected to the room
   socketIo.on('user-connected', (userId) => {
     console.log('User connected:', userId);
+    meetingStatusHeader.innerHTML = 'New user connected';
     connectToNewUser(userId, stream);
   });
 
   // Listen for user disconnections
   socketIo.on('user-disconnected', (userId) => {
     console.log('disconnected', userId);
+    meetingStatusHeader.innerHTML = 'New user disconnected';
     // Close the peer connection if it exists
     if (peers[userId]) peers[userId].close();
   });
@@ -63,6 +66,7 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) 
 // Listen for the 'connect' event to know when the WebSocket connection is established
 socketIo.on('connect', () => {
   console.log('Connected to the server');
+  meetingStatusHeader.innerHTML = 'Connected to socket server';
 });
 
 // Whenever a new peer is opened, take the ID and join the same room
@@ -72,6 +76,8 @@ myPeer.on('open', (id) => {
 
 myPeer.on('call', (call) => {
   console.log('Answering call');
+  meetingStatusHeader.innerHTML = 'Answering call';
+
   navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
     call.answer(stream);
   });
@@ -122,6 +128,7 @@ function addVideoStream(video, stream) {
  */
 function connectToNewUser(userId, stream) {
   console.log('Calling', userId);
+  meetingStatusHeader.innerHTML = 'Calling new user';
 
   const call = myPeer.call(userId, stream);
   const video = document.createElement('video');
