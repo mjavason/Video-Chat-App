@@ -12,7 +12,7 @@ import {
 import { Socket, Server } from 'socket.io';
 import generateUniqueId from 'src/utils/generate_unique_id.util';
 
-@WebSocketGateway(5000, {
+@WebSocketGateway(80, {
   cors: {
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
