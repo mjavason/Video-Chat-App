@@ -30,13 +30,13 @@ myVideo.muted = true;
 
 roomIdHeader.innerHTML = roomId;
 
-const serverUrl = 'wss:video-chat-api-duql.onrender.com'; //ws:localhost // WebSocket URL
+const serverUrl = 'wss://video-chat-api-duql.onrender.com:5000'; //ws:localhost // WebSocket URL
 const socketIo = io(serverUrl);
 
-const myPeer = new Peer(undefined, {
+const myPeer = new Peer({
   host: 'simple-peerjs-server.onrender.com', // '/' on localhost
-  port: '3001',
-  secure: true // when using the live server (https), on local set it to false
+  port: '',
+  secure: true, // when using the live server (https), on local set it to false
 });
 
 /**
