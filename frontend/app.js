@@ -30,6 +30,7 @@ const videoGrid = document.getElementById('video-grid');
 myVideo.muted = true;
 
 roomIdHeader.innerHTML = roomId;
+meetingStatusHeader.innerHTML = 'Connecting'
 
 const serverUrl = 'wss://video-chat-api-duql.onrender.com:5000'; //ws:localhost:5000 // WebSocket URL
 const socketIo = io(serverUrl);
