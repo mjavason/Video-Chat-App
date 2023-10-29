@@ -5,6 +5,7 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const roomId = urlParams.get('room_id');
 var peers = {};
+let globalVideoStream;
 
 // If room ID is not set, create a new one
 if (!roomId) {
@@ -45,6 +46,8 @@ const myPeer = new Peer(undefined, {
 navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
   addVideoStream(myVideo, stream);
 
+  globalVideoStream = stream;
+
   // Notify everyone when a new user is connected to the room
   socketIo.on('user-connected', (userId) => {
     console.log('User connected:', userId);
@@ -57,17 +60,6 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) 
     // Close the peer connection if it exists
     if (peers[userId]) peers[userId].close();
   });
-
-  myPeer.on('call', (call) => {
-    console.log('Answering call');
-    call.answer(stream);
-
-    const video = document.createElement('video');
-
-    call.on('stream', (userVideoStream) => {
-      addVideoStream(video, userVideoStream);
-    });
-  });
 });
 
 // Listen for the 'connect' event to know when the WebSocket connection is established
@@ -78,6 +70,21 @@ socketIo.on('connect', () => {
 // Whenever a new peer is opened, take the ID and join the same room
 myPeer.on('open', (id) => {
   socketIo.emit('join-room', roomId, id);
+});
+
+myPeer.on('call', (call) => {
+  console.log('Answering call');
+  navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+    call.answer(stream);
+  });
+
+  // if (!globalVideoStream) console.log('No video stream available');
+
+  const video = document.createElement('video');
+
+  call.on('stream', (userVideoStream) => {
+    addVideoStream(video, userVideoStream);
+  });
 });
 
 /**
