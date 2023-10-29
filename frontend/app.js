@@ -5,7 +5,6 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const roomId = urlParams.get('room_id');
 var peers = {};
-let globalVideoStream;
 
 // If room ID is not set, create a new one
 if (!roomId) {
@@ -31,7 +30,7 @@ myVideo.muted = true;
 
 roomIdHeader.innerHTML = roomId;
 
-const serverUrl = 'ws://video-chat-api-duql.onrender.com'; // WebSocket URL
+const serverUrl = 'ws://localhost'; // WebSocket URL
 const socketIo = io(serverUrl);
 
 const myPeer = new Peer(undefined, {
@@ -45,8 +44,6 @@ const myPeer = new Peer(undefined, {
  */
 navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
   addVideoStream(myVideo, stream);
-
-  globalVideoStream = stream;
 
   // Notify everyone when a new user is connected to the room
   socketIo.on('user-connected', (userId) => {
