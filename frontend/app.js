@@ -31,7 +31,7 @@ myVideo.muted = true;
 
 roomIdHeader.innerHTML = roomId;
 
-const serverUrl = 'ws://localhost'; // WebSocket URL
+const serverUrl = 'ws://video-chat-api-duql.onrender.com'; // WebSocket URL
 const socketIo = io(serverUrl);
 
 const myPeer = new Peer(undefined, {

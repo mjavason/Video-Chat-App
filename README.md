@@ -1,6 +1,6 @@
 # Video Chat API
 
-This is a simple video chat API built using Nest.js, Socket.io, and WebRTC. It allows users to create or join video chat rooms and communicate with each other via video and audio.
+This is a simple video chat API built using Nest.js, Socket.io, and WebRTC. It allows users to create or join video chat rooms and communicate with each other via video and audio. Currently available at [Backend](https://video-chat-api-duql.onrender.com) and [Frontend](https://video-chat-frontend-36cb.onrender.com)
 
 ## Installation
 
