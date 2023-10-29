@@ -12,10 +12,10 @@ async function bootstrap() {
   app.use(morgan('dev'));
 
   // Enable CORS for the entire application
-  // app.enableCors({
-  //   origin: '*', // Adjust this origin to match your frontend
-  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  // });
+  app.enableCors({
+    origin: '*', // Adjust this origin to match your frontend
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  });
 
   const httpServer = createServer(app.getHttpAdapter().getInstance());
   app.useWebSocketAdapter(new IoAdapter(httpServer));
