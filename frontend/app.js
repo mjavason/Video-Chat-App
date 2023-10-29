@@ -34,7 +34,7 @@ const serverUrl = 'ws://video-chat-api-duql.onrender.com'; //ws:localhost // Web
 const socketIo = io(serverUrl);
 
 const myPeer = new Peer(undefined, {
-  host: '/',
+  host: '/', // '/' on localhost
   port: '3001',
 });
 
