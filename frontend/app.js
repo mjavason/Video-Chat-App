@@ -30,7 +30,7 @@ const videoGrid = document.getElementById('video-grid');
 myVideo.muted = true;
 
 roomIdHeader.innerHTML = roomId;
-meetingStatusHeader.innerHTML = 'Connecting'
+meetingStatusHeader.innerHTML = 'Connecting';
 
 const serverUrl = 'wss://video-chat-api-duql.onrender.com'; //ws:localhost:5000 // WebSocket URL
 const socketIo = io(serverUrl);
@@ -76,8 +76,8 @@ myPeer.on('open', (id) => {
 });
 
 myPeer.on('call', (call) => {
-  console.log('Answering call');
-  meetingStatusHeader.innerHTML = 'Answering call';
+  console.log('Joining room');
+  meetingStatusHeader.innerHTML = 'Joining room';
 
   navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
     call.answer(stream);
@@ -139,6 +139,7 @@ function connectToNewUser(userId, stream) {
   });
 
   call.on('close', () => {
+    video.style.display = 'none';
     video.remove();
   });
 
